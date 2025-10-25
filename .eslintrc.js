@@ -6,24 +6,25 @@ module.exports = {
   },
   extends: [
     "eslint:recommended",
-    "@typescript-eslint/recommended",
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
-    project: ["tsconfig.json", "tsconfig.dev.json"],
+    ecmaVersion: 2020,
     sourceType: "module",
   },
   ignorePatterns: [
     "/lib/**/*", // Ignore built files.
     "/generated/**/*", // Ignore generated files.
+    "node_modules/**/*",
   ],
   plugins: [
     "@typescript-eslint",
-    "import",
   ],
   rules: {
     "quotes": ["error", "double"],
-    "import/no-unresolved": 0,
     "indent": ["error", 2],
+    "semi": ["error", "always"],
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": ["error"],
   },
 };

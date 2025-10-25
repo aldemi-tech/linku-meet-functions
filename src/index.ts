@@ -5,7 +5,7 @@
 
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
-import { google } from 'googleapis';
+// import { google } from "googleapis"; // TODO: Uncomment when implementing Google auth
 
 // Initialize Firebase Admin if not already initialized
 if (!admin.apps.length) {
@@ -50,23 +50,24 @@ const handleError = (error: any) => {
 };
 
 // Google Calendar/Meet integration
-const getGoogleAuth = () => {
-  const clientId = functions.config().google?.client_id || process.env.GOOGLE_CLIENT_ID;
-  const clientSecret = functions.config().google?.client_secret || process.env.GOOGLE_CLIENT_SECRET;
+// TODO: Implement Google Auth when needed
+// const getGoogleAuth = () => {
+//   const clientId = functions.config().google?.client_id || process.env.GOOGLE_CLIENT_ID;
+//   const clientSecret = functions.config().google?.client_secret || process.env.GOOGLE_CLIENT_SECRET;
   
-  if (!clientId || !clientSecret) {
-    throw new Error("Google credentials not configured");
-  }
-  
-  return new google.auth.OAuth2(clientId, clientSecret);
-};
+//   if (!clientId || !clientSecret) {
+//     throw new Error("Google credentials not configured");
+//   }
+//   
+//   return new google.auth.OAuth2(clientId, clientSecret);
+// };
 
 /**
  * Create a new Google Meet meeting
  */
 export const meetCreateMeeting = functions.https.onRequest(async (req, res) => {
   try {
-    if (req.method !== 'POST') {
+    if (req.method !== "POST") {
       res.status(405).json({
         success: false,
         error: { code: "METHOD_NOT_ALLOWED", message: "Only POST method allowed" }
@@ -75,7 +76,7 @@ export const meetCreateMeeting = functions.https.onRequest(async (req, res) => {
     }
 
     const meetingData: MeetingRequest = req.body;
-    validateRequiredFields(meetingData, ['title', 'start_time']);
+    validateRequiredFields(meetingData, ["title", "start_time"]);
 
     // Generate meeting ID and join URL (simplified for demo)
     const meetingId = `meet_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -94,10 +95,10 @@ export const meetCreateMeeting = functions.https.onRequest(async (req, res) => {
     };
 
     // Save meeting to Firestore
-    await admin.firestore().collection('meetings').doc(meetingId).set({
+    await admin.firestore().collection("meetings").doc(meetingId).set({
       ...meeting,
       created_at: admin.firestore.Timestamp.now(),
-      status: 'scheduled'
+      status: "scheduled"
     });
 
     res.json({
@@ -116,7 +117,7 @@ export const meetCreateMeeting = functions.https.onRequest(async (req, res) => {
  */
 export const meetListMeetings = functions.https.onRequest(async (req, res) => {
   try {
-    if (req.method !== 'GET') {
+    if (req.method !== "GET") {
       res.status(405).json({
         success: false,
         error: { code: "METHOD_NOT_ALLOWED", message: "Only GET method allowed" }
@@ -135,9 +136,9 @@ export const meetListMeetings = functions.https.onRequest(async (req, res) => {
 
     // Get meetings from Firestore (simplified)
     const meetingsSnapshot = await admin.firestore()
-      .collection('meetings')
-      .where('created_by', '==', userId)
-      .orderBy('created_at', 'desc')
+      .collection("meetings")
+      .where("created_by", "==", userId)
+      .orderBy("created_at", "desc")
       .limit(50)
       .get();
 
@@ -165,7 +166,7 @@ export const meetListMeetings = functions.https.onRequest(async (req, res) => {
  */
 export const meetUpdateMeeting = functions.https.onRequest(async (req, res) => {
   try {
-    if (req.method !== 'PUT') {
+    if (req.method !== "PUT") {
       res.status(405).json({
         success: false,
         error: { code: "METHOD_NOT_ALLOWED", message: "Only PUT method allowed" }
@@ -185,7 +186,7 @@ export const meetUpdateMeeting = functions.https.onRequest(async (req, res) => {
     const updateData = req.body;
     
     // Update meeting in Firestore
-    await admin.firestore().collection('meetings').doc(meetingId).update({
+    await admin.firestore().collection("meetings").doc(meetingId).update({
       ...updateData,
       updated_at: admin.firestore.Timestamp.now()
     });
@@ -206,7 +207,7 @@ export const meetUpdateMeeting = functions.https.onRequest(async (req, res) => {
  */
 export const meetDeleteMeeting = functions.https.onRequest(async (req, res) => {
   try {
-    if (req.method !== 'DELETE') {
+    if (req.method !== "DELETE") {
       res.status(405).json({
         success: false,
         error: { code: "METHOD_NOT_ALLOWED", message: "Only DELETE method allowed" }
@@ -224,7 +225,7 @@ export const meetDeleteMeeting = functions.https.onRequest(async (req, res) => {
     }
 
     // Delete meeting from Firestore
-    await admin.firestore().collection('meetings').doc(meetingId).delete();
+    await admin.firestore().collection("meetings").doc(meetingId).delete();
 
     res.json({
       success: true,
@@ -242,7 +243,7 @@ export const meetDeleteMeeting = functions.https.onRequest(async (req, res) => {
  */
 export const meetGenerateJoinLink = functions.https.onRequest(async (req, res) => {
   try {
-    if (req.method !== 'GET') {
+    if (req.method !== "GET") {
       res.status(405).json({
         success: false,
         error: { code: "METHOD_NOT_ALLOWED", message: "Only GET method allowed" }
@@ -260,7 +261,7 @@ export const meetGenerateJoinLink = functions.https.onRequest(async (req, res) =
     }
 
     // Get meeting from Firestore
-    const meetingDoc = await admin.firestore().collection('meetings').doc(meetingId).get();
+    const meetingDoc = await admin.firestore().collection("meetings").doc(meetingId).get();
     
     if (!meetingDoc.exists) {
       res.status(404).json({
