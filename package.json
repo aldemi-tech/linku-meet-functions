@@ -1,0 +1,36 @@
+{
+  "name": "linku-meet-functions",
+  "version": "1.0.0",
+  "description": "Google Meet domain functions for Aldemi ecosystem - Meeting management and calendar integration",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "tsc",
+    "serve": "npm run build && firebase emulators:start --only functions",
+    "shell": "npm run build && firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions:meet*",
+    "logs": "firebase functions:log",
+    "test": "jest",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "dependencies": {
+    "firebase-admin": "^11.11.0",
+    "firebase-functions": "^4.8.1",
+    "googleapis": "^128.0.0",
+    "google-auth-library": "^9.4.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.8",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "eslint": "^8.57.0",
+    "firebase-functions-test": "^3.3.0",
+    "jest": "^29.7.0",
+    "typescript": "^5.4.5"
+  },
+  "private": true
+}
